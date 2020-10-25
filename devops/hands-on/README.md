@@ -7,3 +7,8 @@ List of hands-on trainings within DevOps as follows;
 - [Hands-on Docker-02 : Docker Container Basic Operations](./docker/docker-02-container-basic-operations/)
 
 - [Hands-on Docker-03 : Handling Docker Volumes](./docker/docker-03-handling-volumes/)
+
+- [Hands-on Docker-04 : Docker Networking](./docker/docker-04-networking/)
+
+- [Hands-on Docker-05 : Docker Image Basic Operations](./docker/docker-05-image-basic-operations/)
+
