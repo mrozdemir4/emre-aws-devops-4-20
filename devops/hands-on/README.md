@@ -16,5 +16,7 @@ List of hands-on trainings within DevOps as follows;
   
 - [Hands-on Docker-07 :  Dockerize To-Do Web API Developed in Python Flask](./docker/docker-07-dockerize-to-do-app-on-python-flask/)
 
+- [Hands-on Docker-10 : Difference between shell form and exec form, and ENTRYPOINT instruction and CMD instruction](./docker-10-difference-between-exec-form-shell-form-and-CMD-ENTRYPOINT-instructions/README.md)
+
 - [Hands-on Maven-01 : Using Maven As a Build Tool](./maven/maven-01-using-maven-as-a-build-tool/)
 
