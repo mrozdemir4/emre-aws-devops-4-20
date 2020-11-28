@@ -144,8 +144,34 @@ Resources:
                 mkdir -p /home/ec2-user/.docker
                 cd /home/ec2-user/.docker
                 echo '{"credsStore": "ecr-login"}' > config.json
-​
-    
+​  DockerManager1:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      IamInstanceProfile: !Ref EC2ConnectProfile
+      ImageId: ami-0947d2ba12ee1ff75
+      InstanceType: t2.micro
+      KeyName: !Ref KeyName
+      SecurityGroupIds: 
+        - !GetAtt DockerSwarmSecurityGroup.GroupId
+      Tags:
+        - Key: Name
+          Value: !Sub Docker Master of ${AWS::StackName}
+        - Key: project
+          Value: "202"
+      UserData:
+        Fn::Base64:
+          !Sub 
+            - |
+              #! /bin/bash
+              yum update -y
+              hostnamectl set-hostname Docker-Master
+              amazon-linux-extras install docker -y
+              systemctl start docker
+              systemctl enable docker
+              usermod -a -G docker ec2-user
+              curl -L "https://github.com/docker/compose/release/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" \
+              -o /usr/local/bin/docker-compose
+              chmod +x /usr/local/bin/docker-compose         
 ​
 ​
 Outputs:
