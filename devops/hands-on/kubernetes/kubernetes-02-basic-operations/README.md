@@ -33,7 +33,7 @@ At the end of the this hands-on training, students will be able to;
 
 ```bash
 kubectl cluster-info
-kubectl get no
+kubectl get node
 ```
 
 ## Part 2 - Basic Operations in Kubernetes
