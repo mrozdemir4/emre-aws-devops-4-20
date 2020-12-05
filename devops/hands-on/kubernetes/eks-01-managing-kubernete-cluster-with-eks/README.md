@@ -64,7 +64,7 @@ $ aws configure
 $ aws eks list-clusters
 {
   "clusters": [
-    "ArangoDB"
+    "my-cluster"
   ]
 }
 ```
