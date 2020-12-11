@@ -1,4 +1,4 @@
-# Coding Challenge - 013: Fibonacci
+# Coding Challenge - 014: Fibonacci
 
 The purpose of this coding challenge is to write a program that prints Fibonacci series as long as the input provided by the user.
 
