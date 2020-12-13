@@ -104,7 +104,6 @@ $ aws configure
 > Using aws credentials in ec2 instance is not recommended.
 
 - So we use iam role. 
-
 ### Create a role in IAM management console.
 
 - Select `EC2` from `select type of trusted entity`.
