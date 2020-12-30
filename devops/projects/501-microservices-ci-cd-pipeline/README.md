@@ -2835,12 +2835,10 @@ spec:
           serviceName: customers-service
           servicePort: 8081
         path: /api/gateway(/|$)(.*)
-        pathType: ImplementationSpecific
       - backend:
           serviceName: customers-service
           servicePort: 8081
         path: /api/customer(/|$)(.*)
-        pathType: ImplementationSpecific
 ```
 
 * Update `visits-service-ingress.yaml` file with following setup to pass the api requests to `visits service` microservice.
@@ -2858,7 +2856,6 @@ spec:
           serviceName: visits-service
           servicePort: 8082
         path: /api/visit(/|$)(.*)
-        pathType: ImplementationSpecific
 ```
 
 * Update `vets-service-ingress.yaml` file with following setup to pass the api requests to `vets service` microservice.
@@ -2876,7 +2873,6 @@ spec:
           serviceName: vets-service
           servicePort: 8083
         path: /api/vet(/|$)(.*)
-        pathType: ImplementationSpecific
 ```
 
 * Create `kustomization-template.yml` file with following content and save under `k8s/base` folder.
@@ -2981,12 +2977,10 @@ spec:
           serviceName: customers-service
           servicePort: 8081
         path: /api/gateway(/|$)(.*)
-        pathType: ImplementationSpecific
       - backend:
           serviceName: customers-service
           servicePort: 8081
         path: /api/customer(/|$)(.*)
-        pathType: ImplementationSpecific
 
 ---
 apiVersion: extensions/v1beta1
@@ -3002,7 +2996,6 @@ spec:
           serviceName: vets-service
           servicePort: 8083
         path: /api/vet(/|$)(.*)
-        pathType: ImplementationSpecific
 
 ---
 apiVersion: extensions/v1beta1
@@ -3018,7 +3011,6 @@ spec:
           serviceName: visits-service
           servicePort: 8082
         path: /api/visit(/|$)(.*)
-        pathType: ImplementationSpecific
 ```
 
 * Create `kustomization.yml` and `replica-count.yml` files for production envrionment and save them under `k8s/prod` folder.
