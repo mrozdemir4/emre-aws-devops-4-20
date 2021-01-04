@@ -3192,9 +3192,9 @@ git checkout feature/msp-23
 
   * Inbound rules;
 
-    * Allow TCP on port 80 from Application Load Balancer.
+    * Allow HTTP protocol (TCP on port 80) from Application Load Balancer.
 
-    * Allow TCP on port 443 from any source that needs to use Rancher UI or API.
+    * Allow HTTPS protocol (TCP on port 443) from any source that needs to use Rancher UI or API.
 
     * Allow TCP on port 6443 from any source that needs to use Kubernetes API server(ex. Jenkins Server).
   
@@ -3204,7 +3204,7 @@ git checkout feature/msp-23
 
     * Allow SSH on port 22 to any node IP from a node created using Node Driver.
 
-    * Allow TCP on port 443 to `35.160.43.145/32`, `35.167.242.46/32`, `52.33.59.17/32` for catalogs of `git.rancher.io`.
+    * Allow HTTPS protocol (TCP on port 443) to `35.160.43.145/32`, `35.167.242.46/32`, `52.33.59.17/32` for catalogs of `git.rancher.io`.
 
     * Allow TCP on port 2376 to any node IP from a node created using Node Driver for Docker machine TLS port.
 
@@ -3790,9 +3790,44 @@ git branch feature/msp-28
 git checkout feature/msp-28
 ```
 
-* Create an `A` record of `petclinic.clarusway.us` in your hosted zone (in our case `clarusway.us`) using AWS Route 53 domain registrar and bind it to your `petclinic cluster`.
+* Create a target group with name of `matt-petclinic-http-443-tg` with following setup and add the `petclinic application instances` to it.
 
-* Configure TLS(SSL) certificate for `petclinic.clarusway.us` using `cert-manager` on petclinic K8s cluster.
+```text
+Target type         : instance
+Protocol            : HTTPS
+Port                : 443
+
+<!-- Health Checks Settings -->
+Protocol            : HTTPS
+Path                : /healthz
+Port                : traffic port
+Healthy threshold   : 3
+Unhealthy threshold : 3
+Timeout             : 5 seconds
+Interval            : 10 seoconds
+Success             : 200
+```
+
+* Create Application Load Balancer with name of `matt-petclinic-alb` using `matt-rke-alb-sg` security group with following settings and add `matt-petclinic-http-443-tg` target group to it.
+
+```text
+Scheme              : internet-facing
+IP address type     : ipv4
+
+<!-- Listeners-->
+Protocol            : HTTPS/HTTP
+Port                : 443/80
+Availability Zones  : Select AZs of RKE instances
+Target group        : `matt-petclinic-http-443-tg` target group
+```
+
+* Configure ALB Listener of HTTP on `Port 80` to redirect traffic to HTTPS on `Port 443`.
+
+* Create DNS A record for `rancher.clarusway.us` and 
+
+* Create an `A` record of `petclinic003.clarusway.us` in your hosted zone (in our case `clarusway.us`) using AWS Route 53 domain registrar and attach the `matt-petclinic-alb` application load balancer to it.
+
+* Configure TLS(SSL) certificate for `petclinic003.clarusway.us` using `cert-manager` on petclinic K8s cluster with the following steps.
 
 * Log into Jenkins Server and configure the `kubectl` to connect to petclinic cluster by getting the `Kubeconfig` file from Rancher and save it as `$HOME/.kube/config` or set `KUBECONFIG` environment variable.
 
@@ -3810,10 +3845,10 @@ kubectl get ns
   * Create the namespace for cert-manager
 
   ```bash
-  kubectl create namespace cert-manager
+    kubectl create namespace cert-manager
   ```
 
-  * Add the Jetstack Helm repository
+  * Add the Jetstack Helm reposito
 
   ```bash
   helm repo add jetstack https://charts.jetstack.io
@@ -3835,9 +3870,9 @@ kubectl get ns
 
   ```bash
   helm install \
-    cert-manager jetstack/cert-manager \
-    --namespace cert-manager \
-    --version v1.0.4
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --version v1.0.4
   ```
 
   * Verify that the cert-manager is deployed correctly.
@@ -3871,7 +3906,7 @@ spec:
           class: nginx
 ```
 
-* Apply and check if `ClusterIssuer` resource is created.
+* Check if `ClusterIssuer` resource is created.
 
 ```bash
 export KUBECONFIG="$HOME/petclinic-config"
@@ -3905,6 +3940,9 @@ git checkout master
 git merge feature/msp-28
 git push origin master
 ```
+
+* Run the `Production Pipeline` `petclinic-prod` on Jenkins manually to examine the petclinic application.
+
 
 ## MSP 29 - Monitoring with Prometheus and Grafana
 
