@@ -365,7 +365,7 @@ kubectl apply -f clarus-deploy.yaml
 kubectl get deploy,rs,po -l app=container-info
 ```
 
-- Describe deployment and note the image of the deployment. In our case, it is clarusways/container-info:2.0.
+- Describe deployment and note the image of the deployment. In our case, it is clarusways/container-info:1.0.
 
 ```bash
 kubectl describe deploy clarus-deploy

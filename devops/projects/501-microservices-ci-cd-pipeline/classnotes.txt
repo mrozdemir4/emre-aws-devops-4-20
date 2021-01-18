@@ -94,7 +94,6 @@ MSP-11:
 
 MSP-13:
 -------
-
 * to be able to use jacoco plugin of jenkins efficiently
     |--> set the health reporting values
     |--> above sunny -> green, below sunny and above stormy -> unstable, below stormy -> failure
@@ -111,6 +110,7 @@ MSP-13:
     |-->exclusion: It is defined excluded souce code files
 
 resource: https://plugins.jenkins.io/jacoco/
+
 
 MSP-16:
 -------
@@ -168,7 +168,6 @@ MSP-16:
     |--> runs playbooks
     |--> -i : inventory
     |--> -b : become root to run the playbook
-    
 
 Resources:
 ----------
@@ -217,7 +216,6 @@ MSP-17:
     |--> replaces the environment variables in the docker-compose-swarm-dev.yml file with their values.
          then creates a new file with the changed file
 
-
 Resources:
 ----------
 * docker hub address of callahanclarus/selenium-py-chrome/dockerfile
@@ -264,7 +262,6 @@ MSP-22:
 * kubectl kustomize k8s/prod/
     |--> shows the output of kustomization
 
-
 Resources:
 ----------
 * kompose :
@@ -301,6 +298,7 @@ MSP-23:
             |--> If true, NGINX passes the incoming headers info to nginx controller 
                  Use this option when NGINX is behind another L7 proxy / load balancer (Since we're using 
                  an application loadbalancer, we are behind L7 proxy) that is setting these headers.
+
 Resources:
 ----------
 * tagging resources in the cluster
@@ -350,8 +348,6 @@ MSP-24:
              rancher-cluster.rkestate : The Kubernetes cluster state file. This file contains credentials 
              for full access to the cluster.
 
-
-
 Resources:
 ----------
 * Basics of Helm
@@ -361,3 +357,56 @@ Resources:
 * Architecture of Rancher
     |--> https://rancher.com/docs/rancher/v2.x/en/overview/architecture/
 
+
+MSP-25:
+-------
+* If you are having repeated errors complaing about the etcd with the following message (Cluster must have at least 
+  one etcd plane host: failed to connect to the following etcd host(s)...), most probably the issue is related to
+  certification. Rancher needs a TLS Certification to create functioning Kubernetes Clusters. You should issue your
+  AWS Certification while creating the Application Loadbalancer for the rancher cluster. (domain name in the 
+  certification should be issued to a general subdomain name like "*.clarusway.us")
+
+
+MSP-28:
+-------
+* Custom Resources 
+    |--> extension to k8s api. custom resource gives a new endpoint which lets us communicate to new objects
+
+* Custom Resource Definition 
+    |--> it allows you to define custom resources. Defining a CRD object creates a new custom resource with a 
+         name and a schema. The name of a CRD object must be a valid DNS subdomain name. This frees you from 
+         writing your own API server to handle the custom resource.
+
+* CRDs before HELM
+    |--> Before installing the chart, you must first install the cert-manager CustomResourceDefinition resources.
+         This is performed in a separate step to allow you to easily uninstall and reinstall cert-manager without
+         deleting your installed custom resources.
+
+* Warning
+    |--> You should not install multiple instances of cert-manager on a single cluster. 
+         This will lead to undefined behavior and you may be banned from providers such as Let’s Encrypt.
+
+* What is ACME?
+    |--> The ACME Issuer type represents a single account registered with the Automated Certificate 
+         Management Environment (ACME) Certificate Authority server. When you create a new ACME Issuer, 
+         cert-manager will generate a private key which is used to identify you with the ACME server.
+
+* preferredChain ---> Certificate chain (or Chain of Trust) is made up of a list of certificates that 
+  start from a server’s certificate and terminate with the root certificate. If your server’s certificate 
+  is to be trusted, its signature has to be traceable back to its root CA. So basiccally certificate chain type 
+  is the type of key management for these chain of keys. Note that this is a Preferred option, 
+  if none is found matching the request it will give you the default certificate as before
+
+* http01 ---> challange type for the new domain. Basicly your domain should publish a specific url with a requested
+  content in it.
+
+Resources:
+----------
+* Let's Encrypt
+    |--> https://letsencrypt.org/how-it-works/
+
+* ACME
+    |--> https://cert-manager.io/docs/configuration/acme/
+
+* HELM Repo of Jetstack cert-manager 
+    |--> https://artifacthub.io/packages/helm/jetstack/cert-manager
