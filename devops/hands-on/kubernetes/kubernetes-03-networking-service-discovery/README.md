@@ -421,7 +421,7 @@ spec:
 kubectl apply -f web-svc.yaml
 ```
 
-- Reload the page, and see that we can not see the page because of that the Service is selecting on two labels, but the Pods only have one of them. The logic behind this is a Boolean `AND` operation.
+- Reload the page, and see that we can not see the page because that the Service is selecting on two labels, but the Pods only have one of them. The logic behind this is a Boolean `AND` operation.
 
 - Add `version: v1` to `web-flask.yaml --> spec.template.metadata.labels`. So that you end up with:
 

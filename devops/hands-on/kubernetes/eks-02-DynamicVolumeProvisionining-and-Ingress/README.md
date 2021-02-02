@@ -134,7 +134,7 @@ parameters:
   fsType: ext4           
 ```
 
-- Pay attention to that storage-zone and kubernetes node must be in the same zone. If neither zone nor zones is specified, volumes are generally round-robin-ed across all active zones where Kubernetes cluster has a node.
+- Create StorageClass with `kubectl apply` command.
 
 ```bash
 $ kubectl apply -f storage-class.yaml
