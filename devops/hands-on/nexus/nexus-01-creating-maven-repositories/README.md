@@ -29,6 +29,10 @@ At the end of this hands-on training, students will be able to;
 - Part 7 - Check the Components in the Group Repository by Accesing the UI
 
 ## Part 1 : Start Nexus Repository and Create Credentials
+Updates: 
+```
+sudo yum update -y
+```
 
 Install Java: 
 ```
@@ -46,10 +50,17 @@ sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
 sudo yum install -y apache-maven
 ```
 
+
+Create a directory for Nexus and cd inside it:
+```
+sudo mkdir /app && cd /app
+```
+
+
 Download and install Nexus.
 
 ```
-sudo wget https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+sudo wget -O nexus.tar.gz https://download.sonatype.com/nexus/3/latest-unix.tar.gz
 ```
 
 Remember to create your installation directory first.  
@@ -57,14 +68,70 @@ Remember to create your installation directory first.
 When you are ready to extract the repository manager, run:  
 
 ```
-sudo tar xvzf latest-unix.tar.gz from the command line.
+sudo tar xvzf latest-unix.tar.gz 
 ```
 
-Start the repository manager: 
+Rename  nexus-3* directory for convinience:
+```
+sudo mv nexus-3* nexus
+```
+
+As a good security practice, nexus should not be run from root user, instead it should be run from a newly created user. So we create the user:
 
 ```
-./bin/nexus run.
+sudo adduser nexus
 ```
+
+Give the ownership of the directories related to Nexus to the newly created user:
+
+
+```
+sudo chown -R nexus:nexus /app/nexus
+sudo chown -R nexus:nexus /app/sonatype-work
+```
+Tell nexus that user "nexus" is going to be running the service:
+
+```
+sudo vi  /app/nexus/bin/nexus.rc
+```
+```
+run_as_user="nexus"
+```
+
+Run Nexus as Systemctl Service: 
+
+First, we have to add Nexus service to systemctl. Create a new file named nexus.service in the following directory:
+
+```
+sudo vi /etc/systemd/system/nexus.service
+```
+
+Add this content to the directory:
+```
+[Unit]
+Description=nexus service
+After=network.target
+
+[Service]
+Type=forking
+LimitNOFILE=65536
+User=nexus
+Group=nexus
+ExecStart=/app/nexus/bin/nexus start
+ExecStop=/app/nexus/bin/nexus stop
+User=nexus
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Finally, enable nexus and start the service: 
+```
+sudo chkconfig nexus on
+sudo systemctl start nexus
+```
+
 
 Open your browser to load the repository manager: http://<AWS public dns>:8081
 
@@ -102,7 +169,7 @@ Create a pom.xml in the directory:
 touch pom.xml
 ```
 
-Open the POM in vim or vi or any other text editor in your terminal and add the following snippet:
+Open the POM in vim or vi or any other text editor in your terminal and add the following snippet. Be aware that the quotation marks in xmlns tag might not apear if you directly copy and paste the pom.xml content. Do not forget to fix that:
 
 ```
 <project xmlns=”http://maven.apache.org/POM/4.0.0″ xmlns:xsi=”http://www.w3.org/2001/XMLSchema-instance” xsi:schemaLocation=”http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd”>
@@ -125,7 +192,7 @@ Save the file
 
 Open Nexus Repository Manager UI
 
-Create a repo called maven-proxy-hans-on.
+Create a repo called maven-proxy-hands-on.
 
 Choose recipe: maven2 (proxy) 
 
@@ -135,7 +202,7 @@ Remote storage URL:  https://repo1.maven.org/maven2
 
 Click Create repository to complete the form.
 
-Open your settings.xml and add the repo URL configured in steps 1 and 2, so that it points to maven-proxy-lab.
+Open your settings.xml (create one in the root directory if you don't have one) and add the repo URL configured in steps 1 and 2, so that it points to maven-proxy-lab.
 
 Save your changes in the settings.xml file.
 
@@ -210,7 +277,7 @@ Click on the component name to review its details.
 
 ## Part 5 : Configure and Build Components in Maven Hosted Repository 
 
-Next up, configure Maven release and snapshot repositories for deployment. This means updating pom.xml and settings.xml.
+Next up, configure Maven release and snapshot repositories (which come configured with the nexus repository manager) for deployment. This means updating pom.xml and settings.xml.
 
 Your mirror url now should point to http://<AWS public DNS>:8081/repository/maven-public 
 
@@ -291,6 +358,8 @@ Save the file.
 mvn clean deploy.
 ```
 
+Once you see BUILD SUCCESS, you can see the components in the repository from the UI. Check the components inside the snapshot and public repository. 
+
 Open the POM and remove the -SNAPSHOT tag from the version element.
 
 Run the releases build: 
@@ -299,7 +368,7 @@ Run the releases build:
 mvn clean deploy.
 ```
 
-Now once you see BUILD SUCCES, you can see the components in the repository from the UI. Go and check the components.
+Once you see BUILD SUCCESS, you can see the components in the repository from the UI. Go and check the components in the release and public repository.
 
 ## Part 6 : Create a Maven Group Repository Consisting of Previously Created Hosted and Proxy Repositories
 
@@ -370,10 +439,7 @@ So your settings.xml should look like this:
 
 Download components directly to your repository group: mvn install.
 
-## Part 7 : Check the Components in the Group Repository by Accesing the UI
+## Part 7 : Check the Components in the local repository that was installed from the Group Repository that was configured
+Go inside the .m2/repository/ 
 
-Browse and select the maven-all group repository to view all grouped components in the UI.
-
-Expand the tree to view containing all assets of the component.
-
-Locate and click the node label with the file version to view nested list of assets in both your proxy and hosted repositories.
+You will see that you have everything installed that is on your group repository. 

@@ -30,15 +30,15 @@ Parameters:
 Mappings:
   RegionImageMap:
     us-east-1:
-      AMI: ami-0c94855ba95c71c99
+      AMI: ami-0742b4e673072066f
     us-east-2:
-      AMI: ami-0603cbe34fd08cb81
+      AMI: ami-05d72852800cbf29e
     us-west-1:
-      AMI: ami-0e65ed16c9bf1abc7
+      AMI: ami-0577b787189839998
     us-west-2:
-      AMI: ami-0841edc20334f9287
+      AMI: ami-0518bb0e75d3619ca
     eu-west-1:
-      AMI: ami-08a2aed6e0a6f9c7d
+      AMI: ami-0ffea00000f287d30
 Resources:
  
   myAutoScalingGroup:
